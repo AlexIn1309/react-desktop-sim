@@ -16,12 +16,14 @@ export const StyledContainer = styled.div`
 
 export const StyledBottomBar = styled.div<{ backgroundColor: string }>`
   height: 100%;
-  width: 100%;
+  width: 420px;
   display: flex;
   background-color: var(--ui-color-primary);
   border-radius: 50px;
   background-color: #2e3440;
-  box-shadow: 0 -2px 10px 1px #11172b, 0 -2px 3px #bebebe inset;
+  box-shadow:
+    0 -2px 10px 1px #11172b,
+    0 -2px 3px #bebebe inset;
   background-color: ${(props) => props.backgroundColor};
 `;
 

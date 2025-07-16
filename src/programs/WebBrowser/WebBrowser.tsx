@@ -6,7 +6,7 @@ interface WebBrowserProps {}
 function WebBrowser({}: WebBrowserProps) {
   return (
     <StyledWebBrowser>
-      <StyledContents src="http://google.com" />
+      <StyledContents src="https://example.com" />
     </StyledWebBrowser>
   );
 }

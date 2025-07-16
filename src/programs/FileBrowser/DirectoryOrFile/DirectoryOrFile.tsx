@@ -14,7 +14,12 @@ import Box from "../../../components/Box";
 import InputField from "../../../components/InputField";
 import Row from "../../../components/Row";
 import Button from "../../../components/Button";
-import { StyledFolderIcon, StyledItem, StyledItemName } from "./styles";
+import {
+  StyledFolderIcon,
+  StyledItem,
+  StyledItemName,
+  StyledFileIcon,
+} from "./styles";
 import useSystemSettings from "../../../stores/systemSettingsStore";
 
 interface DirectoryOrFileProps {
@@ -37,7 +42,7 @@ function DirectoryOrFile({
   const clickPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [contextAction, setContextAction] = useState<ContextMenuAction | null>(
-    null
+    null,
   );
   const settings = useSystemSettings();
   const fs = useLocalFS();
@@ -65,7 +70,7 @@ function DirectoryOrFile({
             fsObject,
             fs,
             setContextAction,
-            setContextMenuOpen
+            setContextMenuOpen,
           )}
           close={() => setContextMenuOpen(!contextMenuOpen)}
         />
@@ -88,7 +93,9 @@ function DirectoryOrFile({
       )}
       {isFSDirectory(fsObject) ? (
         <StyledFolderIcon fill={settings.iconColor} />
-      ) : null}
+      ) : (
+        <StyledFileIcon fill={settings.iconColor} />
+      )}
       <StyledItemName>{fsObject.name}</StyledItemName>
     </StyledItem>
   );

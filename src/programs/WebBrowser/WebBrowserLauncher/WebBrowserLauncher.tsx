@@ -1,5 +1,6 @@
 import Launcher from "../../../components/BottomBar/Launcher";
 import WebBrowser from "../WebBrowser";
+import icon from "./internet-www-svgrepo-com.svg";
 
 interface WebBrowserLauncherProps {}
 
@@ -13,7 +14,7 @@ function WebBrowserLauncher({}: WebBrowserLauncherProps) {
       WindowTitle="Web Browser"
       initialDimensions={{ height: 400, width: 400 }}
       appContent={<WebBrowser />}
-      icon=""
+      icon={icon}
       menus={[]}
     ></Launcher>
   );

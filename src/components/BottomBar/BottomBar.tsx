@@ -1,6 +1,7 @@
 import CalculatorLauncher from "../../programs/Calculator/CalculatorLauncher";
 import FileBrowserLauncher from "../../programs/FileBrowser/FileBrowserLauncher";
 import SettingsLauncher from "../../programs/Settings/SettingsLauncher";
+import TerminalLauncher from "../../programs/Terminal/TerminalLauncher";
 import TextEditorLauncher from "../../programs/TextEditor/TextEditorLauncher";
 import WebBrowserLauncher from "../../programs/WebBrowser/WebBrowserLauncher";
 import useSystemSettings from "../../stores/systemSettingsStore";
@@ -16,6 +17,7 @@ function BottomBar({}: BottomBarProps) {
     <StyledContainer id="bottom-bar__container">
       <StyledBottomBar id="bottom-bar" backgroundColor={settings.mainColor}>
         <StyledContents id="bottom-bar__contents">
+          <TerminalLauncher />
           <TextEditorLauncher />
           <CalculatorLauncher />
           <WebBrowserLauncher />

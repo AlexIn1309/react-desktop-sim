@@ -16,7 +16,7 @@ const defaultTheme: Theme = {
   accentColor: "#454e60",
   fontColor: "#ffffff",
   iconColor: "#9298b9",
-  background: "https://regolith-linux.org/images/releases/nord-dark.png",
+  background: "https://cdn.wallpapersafari.com/33/20/PXtjBC.jpg",
 };
 
 export interface SystemSettingState {
@@ -58,8 +58,8 @@ export const useSystemSettings = create<SystemSettingState>()(
     }),
     {
       name: "system-settings",
-    }
-  )
+    },
+  ),
 );
 
 export default useSystemSettings;

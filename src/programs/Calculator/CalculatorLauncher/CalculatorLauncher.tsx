@@ -1,5 +1,6 @@
 import Calculator from "..";
 import Launcher from "../../../components/BottomBar/Launcher";
+import icon from "./calculator-svgrepo-com.svg";
 
 interface CalculatorLauncherProps {}
 
@@ -12,7 +13,7 @@ function CalculatorLauncher({}: CalculatorLauncherProps) {
       windowType={windowType}
       WindowTitle="Calculator"
       initialDimensions={{ height: 400, width: 400 }}
-      icon=""
+      icon={icon}
       menus={[]}
       appContent={<Calculator />}
     ></Launcher>
