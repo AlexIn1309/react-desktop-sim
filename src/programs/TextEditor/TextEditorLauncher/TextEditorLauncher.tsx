@@ -3,7 +3,7 @@ import Launcher from "../../../components/BottomBar/Launcher";
 import { MenuItemProps } from "../../../components/MenuItems";
 import icon from "./text-editor-launcher-icon.svg";
 
-function TextEditorLauncher({}: TextEditorLauncherProps) {
+function TextEditorLauncher() {
   const handleSave = () => {
     const event = new Event("save-editor");
     window.dispatchEvent(event);

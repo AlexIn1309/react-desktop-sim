@@ -2,30 +2,29 @@
 
 A simple simulation of a desktop environment, built using React.
 
-[Try it out!](https://devklick.github.io/react-desktop-sim/)
+[Try it out!](https://alexin1309.github.io/react-desktop-sim//)
 
 ## Status
 
 ⚠️ WIP
 
-While it's somewhat functional, it's still a work in progress. Expect things to 
-change fairly often, sometimes for better, sometimes for worse. 
-
+While it's somewhat functional, it's still a work in progress. Expect things to
+change fairly often, sometimes for better, sometimes for worse.
 
 ## Scope And Purpose
 
 The purpose of this app, as with most of my apps, is for fun and practice.
 It doesn't really serve any useful purpose. It's fun to work on, and hopefully
-you find it interesting in some way, either to work on (feel free to get involved) 
+you find it interesting in some way, either to work on (feel free to get involved)
 or just play around with.
 
-There's no defined scope. It's something that will likely slowly be built 
-up more and more over time. With that being said, there are at least a few things 
+There's no defined scope. It's something that will likely slowly be built
+up more and more over time. With that being said, there are at least a few things
 that are definitely out of scope:
 
 - Installing applications
-  <br>You will never be able to install applications into this desktop simulator. 
-  You can build your own applications using React and add them to the repo, but 
+  <br>You will never be able to install applications into this desktop simulator.
+  You can build your own applications using React and add them to the repo, but
   you will never be able to install any genuine applications.
 
 ## Features
@@ -40,7 +39,7 @@ system, but it's enough for you to create files and folders as required.
 ### Moveable/Resizable Applications
 
 You can position your applications anywhere on the desktop, resizing them to fit
-your requirements. You can also minimize and maximize files as required. 
+your requirements. You can also minimize and maximize files as required.
 
 ### File Browser Application
 
@@ -51,24 +50,24 @@ throughout the file system, view and create files and folders, pin favorites, an
 ### Calculator Application
 
 Of course, there's a simple calculator app that allows you to perform basic
-calculations. Don't expect anything fancy though; you wont be able to complete 
+calculations. Don't expect anything fancy though; you wont be able to complete
 you're algebra homework using it!
 
 ### Notes Application
 
-A very bog-standard notes app that allows you to... well, write notes! 
-It doesn't currently support saving files, but that should be added in the near 
-future (the file system supports it, there's just no option in the UI to actually 
+A very bog-standard notes app that allows you to... well, write notes!
+It doesn't currently support saving files, but that should be added in the near
+future (the file system supports it, there's just no option in the UI to actually
 save the file). The same goes for loading saved files.
 
 ### Settings Application
 
-The settings application is for viewing and modifying various settings of the 
+The settings application is for viewing and modifying various settings of the
 desktop environment. At present, this is limited to:
 
 #### Appearance
 
-You can control the appearance of your simulated desktop environment, changing 
+You can control the appearance of your simulated desktop environment, changing
 things like:
 
 - Background image
@@ -77,5 +76,15 @@ things like:
 - Font color
 - Simple icon color
 
-Hopefully the list of configurable appearance settings will continue to grow 
+Hopefully the list of configurable appearance settings will continue to grow
 over time.
+
+### Terminal
+
+Every good Operative System need a Terminal to can manage it.
+Now the terminal manages the file and directory system with some feautures like linux.
+
+- cd: to changing between directory
+- ls: to list all elements inside the current directory
+- cat: to show the content of a file
+- touch: to create a new file

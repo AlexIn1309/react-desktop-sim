@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import useSystemSettings from "../../stores/systemSettingsStore";
 import {
   StyledTextTerminal,
   StyledTerminalContainer,
@@ -7,11 +6,10 @@ import {
   StyledPrompt,
   StyledInput,
 } from "./styles";
-import { createNode, getChildren, getNode, FSNode } from "../../stores/fsDB";
+import { createNode, getNode } from "../../stores/fsDB";
 import { ls, mkdir, cd, touch, cat } from "./commands";
 
 function TextTerminal() {
-  const settings = useSystemSettings();
   const [lines, setLines] = useState<string[]>(["OS-SIM-Terminal v0.1"]);
   const [input, setInput] = useState("");
   const [currentPath, setCurrentPath] = useState("/");
