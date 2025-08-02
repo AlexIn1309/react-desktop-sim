@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import useLocalFSWithHistory from "../../hooks/useLocalFSWithHistory";
 import AppSideBar from "../../components/AppSideBar";
 import MainContent from "./MainContent";
-
+import { getChildren, getNode, FSNode } from "../../stores/fsDB";
 import {
   StyledBottomBar,
   StyledFileBrowser,
@@ -12,8 +11,6 @@ import {
   StyledTopBarButtons,
   StyledTopBarPath,
 } from "./styles";
-
-const defaultPath = "/home/user";
 
 interface FileBrowserProps {
   path?: string;
@@ -48,17 +45,50 @@ function TopBar({
   );
 }
 
-function FileBrowser({ path = defaultPath }: FileBrowserProps) {
-  const fs = useLocalFSWithHistory(path);
+function FileBrowser({ path = "/" }: FileBrowserProps) {
   const appRef = useRef<HTMLDivElement>(null);
 
-  const [pathSearch, setPathSearch] = useState<string>(
-    fs.currentDirectory.path
-  );
+  const [currentPath, setCurrentPath] = useState<string>(path);
+  const [currentDirectory, setCurrentDirectory] = useState<FSNode | null>(null);
+  const [pathSearch, setPathSearch] = useState<string>(path);
+  const [history, setHistory] = useState<string[]>([path]);
+  const [historyIndex, setHistoryIndex] = useState<number>(0);
 
   useEffect(() => {
-    setPathSearch(fs.currentDirectory.path);
-  }, [fs.currentDirectory]);
+    async function loadCurrentDirectory() {
+      const dir = await getNode(currentPath);
+      if (dir && dir.type === "directory") {
+        setCurrentDirectory(dir);
+        setPathSearch(dir.path);
+      }
+    }
+    loadCurrentDirectory();
+  }, [currentPath]);
+
+  function navToPath(newPath: string) {
+    if (newPath === currentPath) return;
+    setCurrentPath(newPath);
+    const updatedHistory = history.slice(0, historyIndex + 1);
+    updatedHistory.push(newPath);
+    setHistory(updatedHistory);
+    setHistoryIndex(updatedHistory.length - 1);
+  }
+
+  function navBack() {
+    if (historyIndex > 0) {
+      const newIndex = historyIndex - 1;
+      setHistoryIndex(newIndex);
+      setCurrentPath(history[newIndex]);
+    }
+  }
+
+  function navForward() {
+    if (historyIndex < history.length - 1) {
+      const newIndex = historyIndex + 1;
+      setHistoryIndex(newIndex);
+      setCurrentPath(history[newIndex]);
+    }
+  }
 
   function onPathInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     setPathSearch(e.currentTarget.value);
@@ -66,7 +96,7 @@ function FileBrowser({ path = defaultPath }: FileBrowserProps) {
 
   function onPathInputSubmit(e: React.KeyboardEvent) {
     if (e.code === "Enter") {
-      fs.navToPath(pathSearch);
+      navToPath(pathSearch);
     }
   }
 
@@ -76,23 +106,33 @@ function FileBrowser({ path = defaultPath }: FileBrowserProps) {
         pathSearch={pathSearch}
         onPathInputChange={onPathInputChange}
         onPathInputSubmit={onPathInputSubmit}
-        navBack={fs.navBack}
-        navForward={fs.navForward}
+        navBack={navBack}
+        navForward={navForward}
       />
 
       <AppSideBar
-        items={fs.favorites.map((fav) => ({
-          title: fs.getNameFromPath(fav) ?? "",
-          isActive: fav === fs.currentDirectory.path,
-          onClick: () => fs.navToPath(fav),
-        }))}
+        items={[
+          {
+            title: "Home",
+            isActive: currentPath === "/",
+            onClick: () => navToPath("/"),
+          },
+          {
+            title: "User",
+            isActive: currentPath === "/User",
+            onClick: () => navToPath("/User"),
+          },
+        ]}
       />
 
-      <MainContent
-        currentDirectory={fs.currentDirectory}
-        openFSObject={fs.navToObject}
-        appRef={appRef}
-      />
+      {currentDirectory && (
+        <MainContent
+          currentDirectory={currentDirectory}
+          openFSObject={(fsObject) => navToPath(fsObject.path)}
+          appRef={appRef}
+        />
+      )}
+
       <StyledBottomBar />
     </StyledFileBrowser>
   );

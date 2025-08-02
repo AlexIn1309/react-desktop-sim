@@ -60,3 +60,22 @@ export async function updateFileContent(
     updatedAt: new Date().toISOString(),
   });
 }
+
+export async function deleteNode(path: string): Promise<void> {
+  await fsDB.nodes.delete(path);
+}
+
+export async function renameNode(
+  oldNode: FSNode,
+  newName: string,
+): Promise<void> {
+  const newPath = `${oldNode.parent}/${newName}`.replace(/\/+/g, "/");
+  const updated: FSNode = {
+    ...oldNode,
+    name: newName,
+    path: newPath,
+    updatedAt: new Date().toISOString(),
+  };
+  await deleteNode(oldNode.path);
+  await createNode(updated);
+}

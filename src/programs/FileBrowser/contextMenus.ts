@@ -1,26 +1,40 @@
 import { MenuItemProps } from "../../components/MenuItems";
-import { FSObject, FSObjectType, LocalFSState } from "../../stores/localFS";
+import { FSNode, createNode } from "../../stores/fsDB";
 
 export type ContextMenuAction = "delete" | "rename";
 
 export function getMainContentContextItems(
-  setShowPrompt: (type: FSObjectType) => void,
-  setContextMenuOpen: (open: boolean) => void
+  currentPath: string,
+  setContextMenuOpen: (open: boolean) => void,
+  refresh?: () => void,
 ): Array<MenuItemProps> {
+  async function createItem(type: "file" | "directory") {
+    const name = window.prompt(`Nombre del $(type): `);
+    if (!name) return;
+
+    const path = `${currentPath}/${name}`.replace(/\/+/g, "/");
+    await createNode({
+      name,
+      path,
+      parent: currentPath,
+      type,
+      content: type === "file" ? "" : undefined,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    });
+
+    setContextMenuOpen(false);
+    refresh?.();
+  }
+
   return [
     {
       title: "Create Directory",
-      action: () => {
-        setShowPrompt("directory");
-        setContextMenuOpen(false);
-      },
+      action: () => createItem("directory"),
     },
     {
       title: "Create File",
-      action: () => {
-        setShowPrompt("file");
-        setContextMenuOpen(false);
-      },
+      action: () => createItem("file"),
     },
     {
       title: "Open in Terminal",
@@ -29,27 +43,20 @@ export function getMainContentContextItems(
 }
 
 export function getFSObjectContextMenu(
-  fsObject: FSObject,
-  fs: LocalFSState,
+  fsObject: FSNode,
   setContextAction: (action: ContextMenuAction) => void,
-  setContextMenuOpen: (open: boolean) => void
+  setContextMenuOpen: (open: boolean) => void,
 ): Array<MenuItemProps> {
-  switch (fsObject.type) {
-    case "file":
-      return getFSFileContextMenu(setContextAction, setContextMenuOpen);
-    case "directory":
-      return getFSDirectoryContextMenu(
-        fsObject,
-        fs,
-        setContextAction,
-        setContextMenuOpen
-      );
+  if (fsObject.type === "file") {
+    return getFSFileContextMenu(setContextAction, setContextMenuOpen);
   }
+
+  return getFSDirectoryContextMenu(setContextAction, setContextMenuOpen);
 }
 
 function getFSFileContextMenu(
   setContextAction: (action: ContextMenuAction) => void,
-  setContextMenuOpen: (open: boolean) => void
+  setContextMenuOpen: (open: boolean) => void,
 ): Array<MenuItemProps> {
   return [
     {
@@ -70,11 +77,8 @@ function getFSFileContextMenu(
 }
 
 function getFSDirectoryContextMenu(
-  fsObject: FSObject,
-  fs: LocalFSState,
   setContextAction: (action: ContextMenuAction) => void,
-
-  setContextMenuOpen: (open: boolean) => void
+  setContextMenuOpen: (open: boolean) => void,
 ): Array<MenuItemProps> {
   return [
     {
@@ -88,17 +92,6 @@ function getFSDirectoryContextMenu(
       title: "Delete Directory",
       action: () => {
         setContextAction("delete");
-        setContextMenuOpen(false);
-      },
-    },
-    {
-      title: fs.favorites.includes(fsObject.path)
-        ? "Remove from Favorites"
-        : "Add to Favorites",
-      action: () => {
-        fs.favorites.includes(fsObject.path)
-          ? fs.removeFromFavorites(fsObject.path)
-          : fs.addToFavorites(fsObject.path);
         setContextMenuOpen(false);
       },
     },

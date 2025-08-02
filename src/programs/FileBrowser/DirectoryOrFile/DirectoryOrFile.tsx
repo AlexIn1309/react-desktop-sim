@@ -1,9 +1,4 @@
 import React, { useRef, useState } from "react";
-import useLocalFS, {
-  FSDirectory,
-  FSObject,
-  isFSDirectory,
-} from "../../../stores/localFS";
 import ContextMenu from "../../../components/ContextMenu/ContextMenu";
 import { ContextMenuAction, getFSObjectContextMenu } from "../contextMenus";
 
@@ -21,14 +16,15 @@ import {
   StyledFileIcon,
 } from "./styles";
 import useSystemSettings from "../../../stores/systemSettingsStore";
+import { FSNode, renameNode, deleteNode } from "../../../stores/fsDB";
 
 interface DirectoryOrFileProps {
-  fsObject: FSObject;
+  fsObject: FSNode;
   selected: boolean;
-  openFSObject: (fsObject: FSObject) => void;
+  openFSObject: (fsObject: FSNode) => void;
   setSelected: (path: string) => void;
   appRef: React.RefObject<HTMLDivElement>;
-  currentDirectory: FSDirectory;
+  currentDirectory: FSNode;
 }
 
 function DirectoryOrFile({
@@ -45,7 +41,6 @@ function DirectoryOrFile({
     null,
   );
   const settings = useSystemSettings();
-  const fs = useLocalFS();
 
   function handleRightClick(event: React.MouseEvent) {
     clickPosition.current = { x: event.clientX, y: event.clientY };
@@ -68,7 +63,6 @@ function DirectoryOrFile({
           position={clickPosition.current}
           items={getFSObjectContextMenu(
             fsObject,
-            fs,
             setContextAction,
             setContextMenuOpen,
           )}
@@ -91,7 +85,7 @@ function DirectoryOrFile({
           fsObject={fsObject}
         />
       )}
-      {isFSDirectory(fsObject) ? (
+      {fsObject.type === "directory" ? (
         <StyledFolderIcon fill={settings.iconColor} />
       ) : (
         <StyledFileIcon fill={settings.iconColor} />
@@ -102,21 +96,15 @@ function DirectoryOrFile({
 }
 
 interface RenamePopupProps {
-  fsObject: FSObject;
+  fsObject: FSNode;
   appRef: React.RefObject<HTMLDivElement>;
-  currentDirectory: FSDirectory;
+  currentDirectory: FSNode;
   close: () => void;
 }
 
-function RenamePopup({
-  appRef,
-  fsObject,
-  currentDirectory,
-  close,
-}: RenamePopupProps) {
+function RenamePopup({ appRef, fsObject, close }: RenamePopupProps) {
   const valueRef = useRef("");
-  const fs = useLocalFS();
-  const [error, setError] = useState(fs.validateFSObjectName(""));
+  const [error, setError] = useState("");
 
   useBindKeyToAction({
     keys: ["Escape"],
@@ -130,24 +118,22 @@ function RenamePopup({
   function handleValueChange(value: string) {
     valueRef.current = value;
 
-    const invalid = fs.validateFSObjectName(value);
-    if (invalid) {
-      setError(invalid);
+    if (!value.trim) {
+      setError("El nombre no puede estar vacio");
       return;
     }
 
-    const available = fs.fsObjectNameIsAvailable(value, currentDirectory);
-    if (!available) {
+    if (value == fsObject.name) {
       setError(`${value} already exists`);
       return;
     }
 
-    setError(null);
+    setError("");
   }
 
-  function handleClickConfirm() {
+  async function handleClickConfirm() {
     if (error) return;
-    fs.rename(currentDirectory, fsObject, valueRef.current);
+    await renameNode(fsObject, valueRef.current);
     close();
   }
 
@@ -177,21 +163,15 @@ function RenamePopup({
 
 interface DeletePopupProps {
   appRef: React.RefObject<HTMLDivElement>;
-  fsObject: FSObject;
-  currentDirectory: FSDirectory;
+  fsObject: FSNode;
+  currentDirectory: FSNode;
   close: () => void;
 }
 
-function DeletePopup({
-  appRef,
-  fsObject,
-  currentDirectory,
-  close,
-}: DeletePopupProps) {
-  const fs = useLocalFS();
-
-  function handleClickConfirm() {
-    fs.delete(currentDirectory, fsObject);
+function DeletePopup({ appRef, fsObject, close }: DeletePopupProps) {
+  async function handleClickConfirm() {
+    await deleteNode(fsObject.path);
+    close();
   }
 
   return (
